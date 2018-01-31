@@ -64,9 +64,17 @@ def get_split(split_name, dataset_dir, file_pattern, reader,
     Raises:
         ValueError: if `split_name` is not a valid train/test split.
     """
+    print('-----------------------------------------------------------')
+    print('file_pattern:',file_pattern)
     if split_name not in split_to_sizes:
         raise ValueError('split name %s was not recognized.' % split_name)
     file_pattern = os.path.join(dataset_dir, file_pattern % split_name)
+
+    print('split_name:' , split_name)
+    print('split_to_sizes:' , split_to_sizes)
+    print('file_pattern:' , file_pattern)
+    print('------------------------------------------------------------')
+
 
     # Allowing None in the signature so that dataset_factory can use the default.
     if reader is None:
@@ -106,6 +114,7 @@ def get_split(split_name, dataset_dir, file_pattern, reader,
     #     labels_to_names = create_readable_names_for_imagenet_labels()
     #     dataset_utils.write_label_file(labels_to_names, dataset_dir)
 
+    print('here i will output------------------------------------------------!')
     return slim.dataset.Dataset(
             data_sources=file_pattern,
             reader=reader,

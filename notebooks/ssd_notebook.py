@@ -47,13 +47,17 @@ class Predict(object):
                 self.predictions, self.localisations, _, _ = self.ssd_net.net(self.image_4d, is_training=False,reuse=False)
             self.saver = tf.train.Saver()
 
-        self.gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.08)
-        self.config = tf.ConfigProto(gpu_options=self.gpu_options)
+
+        self.gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
+        self.config = tf.ConfigProto(gpu_options=self.gpu_options , log_device_placement=True)
         self.sess = tf.Session(graph=self.graph , config=self.config)
 
         with self.sess.as_default():
             with self.graph.as_default():
-                self.saver.restore(self.sess ,"../checkpoints/ssd_300_vgg.ckpt")
+                # self.saver.restore(self.sess ,"/home/han/SSD/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt")
+
+                model_file = tf.train.latest_checkpoint('/home/han/SSD/logs/')
+                self.saver.restore(self.sess , model_file)
 
 
     def predict(self , img, select_threshold=0.5, nms_threshold=.45):
@@ -268,12 +272,15 @@ def worker(index , images):
     print("end working...")
     total_time = time.time() - start_time
     print("cost time:", total_time)
-    print("pid:" , os.getpid())
+
+    print("thread id:" , threading._get_ident())
 
 def usb_test(images):
     print("start working...")
     # start_time = time.time()
     num = len(images)
+    if num < 1:
+        print("not images")
     p = Predict(None)
     for i in range(num):
         img = mpimg.imread(images[i])
@@ -283,6 +290,15 @@ def usb_test(images):
     # total_time = time.time() - start_time
     # print("cost time:", total_time)
     print("pid:" , os.getpid())
+
+# 测试前向传播并显示图像
+img = mpimg.imread("../demo/timg.jpeg")
+start_time = time.time()
+p = Predict(None)
+total_time = time.time() - start_time
+print("total time:" , total_time)
+rclasses , rscores , rbboxes = p.predict(img)
+visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
 
 
 # img = mpimg.imread(path + image_names[-5])
@@ -294,50 +310,47 @@ def usb_test(images):
 # visualization.plt_bboxes(img, rclasses2, rscores2, rbboxes2)
 
 
-imgs_dir = "/home/han/Faster-R-CNN/data/VOCdevkit2007/VOC2007/JPEGImages"
-img_lists = glob.glob(imgs_dir + "/*.jpg")
-print(len(img_lists))
+# imgs_dir = "/home/han/Faster-R-CNN/data/VOCdevkit2007/VOC2007/JPEGImages"
+# img_lists = glob.glob(imgs_dir + "/*.jpg")
+# img_lists = list(reversed(img_lists))
+# print(len(img_lists))
 
-start_time = datetime.now()
+# start_time = datetime.now()
+
 # 进程测试
-p_array = []
-for i in range(8):
-    p_i = multiprocessing.Process(target=worker , args=(i , img_lists[600 * i:(i + 1) * 600]))
-    p_array.append(p_i)
-for i in p_array:
-    i.start()
-for i in p_array:
-    i.join()
+# p_array = []
+# NUM_Process = 4
+# per_block = 4800/NUM_Process
+# for i in range(NUM_Process):
+#     p_i = multiprocessing.Process(target=worker , args=(i , img_lists[per_block * i:(i + 1) * per_block]))
+#     p_array.append(p_i)
+# for i in p_array:
+#     i.start()
+# for i in p_array:
+#     i.join()
+
 
 # 串行测试
 # usb_test(img_lists)
-
-# start_time = time.time()
 # for i in range(8):
 #     usb_test(img_lists[600 * i:(i + 1) * 600])
-# cost_time = time.time() - start_time
-# print("cost total time:" , cost_time)
+
 
 
 
 # 线程测试
 # threads = []
-# t1 = threading.Thread(target=worker, args=(1 , img))
-# t2 = threading.Thread(target=worker , args=(2 , img))
-# threads.append(t1)
-# threads.append(t2)
+# NUM_THREAD = 10
 #
-# for t in threads:
-#     # t.setDaemon(True)
-#     t.start()
-# start = datetime.now()
-# threads = []
-# for i in range(8):
-#     t = threading.Thread(target=worker , args=(i , img_lists[600 * i : 600 * (i + 1)]))
+#
+# per_block = 4800/NUM_THREAD
+# for i in range(NUM_THREAD):
+#     t = threading.Thread(target=worker , args=(i , img_lists[per_block * i : per_block * (i + 1)]))
 #     threads.append(t)
 # for t in threads:
 #     t.start()
 # for t in threads:
 #     t.join()
-cost_time = datetime.now() - start_time
-print("all cost time :%s" % timedelta.total_seconds(cost_time))
+#
+# cost_time = datetime.now() - start_time
+# print("all cost time :%s" % timedelta.total_seconds(cost_time))

@@ -103,8 +103,15 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     Raises:
         ValueError: if `split_name` is not a valid train/test split.
     """
+
+    print('---------------------------------------------------------')
+
     if not file_pattern:
         file_pattern = FILE_PATTERN
+    print('file_pattern:', file_pattern)
+    print('---------------------------------------------------------')
+    print('\n\n')
+
     return pascalvoc_common.get_split(split_name, dataset_dir,
                                       file_pattern, reader,
                                       SPLITS_TO_SIZES,

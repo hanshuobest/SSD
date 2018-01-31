@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+# usage
+
+
+
 """Generic evaluation script that evaluates a SSD model
 on a given dataset."""
 import math
@@ -28,6 +32,17 @@ from tensorflow.python.framework import ops
 from datasets import dataset_factory
 from nets import nets_factory
 from preprocessing import preprocessing_factory
+
+def flatten(x):
+    result = []
+    for el in x:
+         if isinstance(el, tuple):
+               result.extend(flatten(el))
+         else:
+               result.append(el)
+    return result
+
+
 
 slim = tf.contrib.slim
 
@@ -65,7 +80,7 @@ tf.app.flags.DEFINE_boolean(
 tf.app.flags.DEFINE_integer(
     'num_classes', 21, 'Number of classes to use in the dataset.')
 tf.app.flags.DEFINE_integer(
-    'batch_size', 1, 'The number of samples in each batch.')
+    'batch_size', 2, 'The number of samples in each batch.')
 tf.app.flags.DEFINE_integer(
     'max_num_batches', None,
     'Max number of batches to evaluate by default use all.')
@@ -80,6 +95,7 @@ tf.app.flags.DEFINE_string(
 tf.app.flags.DEFINE_integer(
     'num_preprocessing_threads', 4,
     'The number of threads used to create the batches.')
+
 tf.app.flags.DEFINE_string(
     'dataset_name', 'imagenet', 'The name of the dataset to load.')
 tf.app.flags.DEFINE_string(
@@ -118,6 +134,13 @@ def main(_):
         dataset = dataset_factory.get_dataset(
             FLAGS.dataset_name, FLAGS.dataset_split_name, FLAGS.dataset_dir)
 
+        print('-------------------------------------------------------------')
+        print('dataset:' , dataset)
+        print('FLAGS.model_name:' , FLAGS.model_name)
+        print('-------------------------------------------------------------')
+        print('\n\n')
+
+
         # Get the SSD network and its anchors.
         ssd_class = nets_factory.get_network(FLAGS.model_name)
         ssd_params = ssd_class.default_params._replace(num_classes=FLAGS.num_classes)
@@ -132,6 +155,7 @@ def main(_):
         image_preprocessing_fn = preprocessing_factory.get_preprocessing(
             preprocessing_name, is_training=False)
 
+        print('dataset.data_sources:' , dataset.data_sources)
         tf_utils.print_configuration(FLAGS.__flags, ssd_params,
                                      dataset.data_sources, FLAGS.eval_dir)
         # =================================================================== #
@@ -302,20 +326,29 @@ def main(_):
             num_batches = math.ceil(dataset.num_samples / float(FLAGS.batch_size))
 
         if not FLAGS.wait_for_checkpoints:
-            if tf.gfile.IsDirectory(FLAGS.checkpoint_path):
-                checkpoint_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
-            else:
-                checkpoint_path = FLAGS.checkpoint_path
-            tf.logging.info('Evaluating %s' % checkpoint_path)
-
+            # 2018-1-26
+            # if tf.gfile.IsDirectory(FLAGS.checkpoint_path):
+            #     checkpoint_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
+            #     print('checkpoint_path:', checkpoint_path)
+            # else:
+            #     checkpoint_path = FLAGS.checkpoint_path
+            # tf.logging.info('Evaluating %s' % checkpoint_path)
+            checkpoint_path = FLAGS.checkpoint_path
             # Standard evaluation loop.
+
+            print('----------------------------------------------------------------')
+            print('checkpoint_path:' , checkpoint_path)
+            print('FLAGS.eval_dir:' , FLAGS.eval_dir)
+            print('----------------------------------------------------------------')
+            print('\n\n')
+
             start = time.time()
             slim.evaluation.evaluate_once(
                 master=FLAGS.master,
                 checkpoint_path=checkpoint_path,
                 logdir=FLAGS.eval_dir,
                 num_evals=num_batches,
-                eval_op=list(names_to_updates.values()),
+                eval_op=flatten(list(names_to_updates.values())),
                 variables_to_restore=variables_to_restore,
                 session_config=config)
             # Log time spent.
@@ -334,7 +367,7 @@ def main(_):
                 checkpoint_dir=checkpoint_path,
                 logdir=FLAGS.eval_dir,
                 num_evals=num_batches,
-                eval_op=list(names_to_updates.values()),
+                eval_op=flatten(list(names_to_updates.values())),
                 variables_to_restore=variables_to_restore,
                 eval_interval_secs=60,
                 max_number_of_evaluations=np.inf,

@@ -13,6 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 """Generic training script that trains a SSD model using a given dataset."""
+
 import tensorflow as tf
 from tensorflow.python.ops import control_flow_ops
 
@@ -21,6 +22,7 @@ from deployment import model_deploy
 from nets import nets_factory
 from preprocessing import preprocessing_factory
 import tf_utils
+import time
 
 slim = tf.contrib.slim
 
@@ -151,7 +153,7 @@ tf.app.flags.DEFINE_integer(
     'batch_size', 32, 'The number of samples in each batch.')
 tf.app.flags.DEFINE_integer(
     'train_image_size', None, 'Train image size')
-tf.app.flags.DEFINE_integer('max_number_of_steps', None,
+tf.app.flags.DEFINE_integer('max_number_of_steps', 1000,
                             'The maximum number of training steps.')
 
 # =========================================================================== #
@@ -370,6 +372,15 @@ def main(_):
                                keep_checkpoint_every_n_hours=1.0,
                                write_version=2,
                                pad_step_number=False)
+
+        print('-------------------------------------------------------------------------------')
+        print('FLAGS.max_number_of_steps:' , FLAGS.max_number_of_steps)
+        print('-------------------------------------------------------------------------------')
+        print('\n\n')
+
+
+        start_time = time.time()
+
         slim.learning.train(
             train_tensor,
             logdir=FLAGS.train_dir,
@@ -384,6 +395,9 @@ def main(_):
             save_interval_secs=FLAGS.save_interval_secs,
             session_config=config,
             sync_optimizer=None)
+
+        total_time = time.time() - start_time
+        print("cost total time:" , total_time)
 
 
 if __name__ == '__main__':

@@ -587,6 +587,7 @@ def ssd_losses(logits, localisations,
         lshape = tfe.get_shape(logits[0], 5)
         num_classes = lshape[-1]
         batch_size = lshape[0]
+        print("batch_size:" , batch_size)
 
         # Flatten out all vectors!
         flogits = []

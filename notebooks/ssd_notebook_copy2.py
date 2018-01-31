@@ -17,6 +17,7 @@ import sys
 sys.path.append('../')
 from nets import ssd_vgg_300, ssd_common, np_methods
 from preprocessing import ssd_vgg_preprocessing
+
 # from notebooks import visualization
 import visualization
 import multiprocessing
@@ -267,16 +268,16 @@ image_names = sorted(os.listdir(path))
 
 # img = mpimg.imread(path + image_names[-5])
 img = mpimg.imread("../demo/timg.jpeg")
-# rclasses, rscores, rbboxes =  process_image2(isess , img)
-# rclasses2, rscores2, rbboxes2 =  process_image2(isess2 , img)
+rclasses, rscores, rbboxes =  process_image2(isess , img)
+rclasses2, rscores2, rbboxes2 =  process_image2(isess2 , img)
 
-# visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
-# visualization.plt_bboxes(img, rclasses2, rscores2, rbboxes2)
+visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
+visualization.plt_bboxes(img, rclasses2, rscores2, rbboxes2)
 
 
-imgs_dir = "/home/han/Faster-R-CNN/data/VOCdevkit2007/VOC2007/JPEGImages"
-img_lists = glob.glob(imgs_dir + "/*.jpg")
-print(len(img_lists))
+# imgs_dir = "/home/han/Faster-R-CNN/data/VOCdevkit2007/VOC2007/JPEGImages"
+# img_lists = glob.glob(imgs_dir + "/*.jpg")
+# print(len(img_lists))
 
 
 
@@ -297,12 +298,12 @@ print(len(img_lists))
 
 
 # 线程测试
-threads = []
-t1 = threading.Thread(target=worker, args=(1 , img))
-t2 = threading.Thread(target=worker , args=(2 , img))
-threads.append(t1)
-threads.append(t2)
-
-for t in threads:
-    # t.setDaemon(True)
-    t.start()
+# threads = []
+# t1 = threading.Thread(target=worker, args=(1 , img))
+# t2 = threading.Thread(target=worker , args=(2 , img))
+# threads.append(t1)
+# threads.append(t2)
+#
+# for t in threads:
+#     # t.setDaemon(True)
+#     t.start()
