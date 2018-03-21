@@ -48,7 +48,8 @@ motivating the use of special padding layer for controlling these side-effects.
 
 @@ssd_vgg_300
 """
-#coding:utf-8
+# -*- coding:utf8 -*-
+
 import math
 from collections import namedtuple
 
@@ -384,7 +385,6 @@ def ssd_anchors_all_layers(img_shape,
 # =========================================================================== #
 def tensor_shape(x, rank=3):
     """Returns the dimensions of a tensor.
-    返回一个张量的维度
     Args:
       image: A N-D Tensor of shape.
     Returns:
@@ -407,7 +407,6 @@ def ssd_multibox_layer(inputs,
                        normalization=-1,
                        bn_normalization=False):
     """Construct a multibox layer, return a class and localization predictions.
-    构架一个多层框，返回一个类别和定位
     """
     net = inputs
     if normalization > 0:
@@ -419,15 +418,12 @@ def ssd_multibox_layer(inputs,
     num_loc_pred = num_anchors * 4
     loc_pred = slim.conv2d(net, num_loc_pred, [3, 3], activation_fn=None,
                            scope='conv_loc')
-    # 该函数将变换输入数据的格式[num , h , w , channels]
+   
+    # convert the format of data :[num , h , w , channels]
     loc_pred = custom_layers.channel_to_last(loc_pred)
-    # 形状变为[num , h , w , channels , num_anchors , 4]
+    # the shape of loc_pred is :[num  , h , w , num_anchors , 4]
     loc_pred = tf.reshape(loc_pred,
                           tensor_shape(loc_pred, 4)[:-1]+[num_anchors, 4])
-    print('???????????????????????????????')
-    print(loc_pred.get_shape())
-    print('???????????????????????????????')
-
     # Class prediction.
     num_cls_pred = num_anchors * num_classes
     cls_pred = slim.conv2d(net, num_cls_pred, [3, 3], activation_fn=None,
