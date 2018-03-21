@@ -10,7 +10,8 @@ from nets import nets_factory
 from preprocessing import preprocessing_factory
 import tf_utils
 import time
-
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 slim = tf.contrib.slim
 
 DATA_FORMAT = 'NCHW'
@@ -367,7 +368,12 @@ def main(_):
 
 
         start_time = time.time()
-
+	
+	print('train_dir:' , FLAGS.train_dir)
+	print('max_number_of_steps:' , FLAGS.max_number_of_steps)
+	print('log_every_n_steps:' , FLAGS.log_every_n_steps)
+	print('save_summaries_secs:' , FLAGS.save_summaries_secs)
+	print('save_interval_secs:' , FLAGS.save_interval_secs)
         slim.learning.train(
             train_tensor,
             logdir=FLAGS.train_dir,
