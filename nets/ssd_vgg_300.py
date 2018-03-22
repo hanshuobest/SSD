@@ -97,10 +97,11 @@ class SSDNet(object):
         img_shape=(300, 300),
         num_classes=21,
         no_annotation_label=21,
-        feat_layers=['block4', 'block7', 'block8', 'block9', 'block10', 'block11'],
-        feat_shapes=[(38, 38), (19, 19), (10, 10), (5, 5), (3, 3), (1, 1)],
+        feat_layers=['block4', 'block7', 'block8', 'block9', 'block10', 'block11'], # feature lay ,decise which layer is used
+        feat_shapes=[(38, 38), (19, 19), (10, 10), (5, 5), (3, 3), (1, 1)], # the shape of feature layer
         anchor_size_bounds=[0.15, 0.90],
         # anchor_size_bounds=[0.20, 0.90],
+        # except 21 and 315 ,others are computed by anchor_size_bounds
         anchor_sizes=[(21., 45.),
                       (45., 99.),
                       (99., 153.),
@@ -121,7 +122,9 @@ class SSDNet(object):
                        [2, .5]],
         anchor_steps=[8, 16, 32, 64, 100, 300],
         anchor_offset=0.5,
+        # if normalizations > 0 the feature map will use L2norm,so the 20 has no especific meaning
         normalizations=[20, -1, -1, -1, -1, -1],
+        # adjust x,y regress and w,h regress take the percent of loss
         prior_scaling=[0.1, 0.1, 0.2, 0.2]
         )
 
