@@ -205,6 +205,8 @@ def main(_):
 
         # Select the preprocessing function.
         preprocessing_name = FLAGS.preprocessing_name or FLAGS.model_name
+
+        # image_preprocessing_fn:the preprocess function
         image_preprocessing_fn = preprocessing_factory.get_preprocessing(
             preprocessing_name, is_training=True)
 

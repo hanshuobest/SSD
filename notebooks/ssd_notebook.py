@@ -54,10 +54,10 @@ class Predict(object):
 
         with self.sess.as_default():
             with self.graph.as_default():
-                # self.saver.restore(self.sess ,"/home/han/SSD/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt/VGG_VOC0712_SSD_300x300_ft_iter_120000.ckpt")
+                self.saver.restore(self.sess ,"/Users/han/Deeplearning/SSD/checkpoints/ssd_300_vgg.ckpt")
 
-                model_file = tf.train.latest_checkpoint('/home/han/SSD/logs/')
-                self.saver.restore(self.sess , model_file)
+                # model_file = tf.train.latest_checkpoint('/home/han/SSD/logs/')
+                # self.saver.restore(self.sess , model_file)
 
 
     def predict(self , img, select_threshold=0.5, nms_threshold=.45):
