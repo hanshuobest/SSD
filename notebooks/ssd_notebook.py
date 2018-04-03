@@ -17,14 +17,19 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import sys
 sys.path.append('../')
-from nets import ssd_vgg_300, ssd_common, np_methods
-from preprocessing import ssd_vgg_preprocessing
+
+from net import ssd_vgg_300, ssd_common, np_methods
+from preprocessing2 import ssd_vgg_preprocessing
+
+
 # from notebooks import visualization
 import visualization
 import multiprocessing
 import threading
 import glob
 from multiprocessing import JoinableQueue
+
+import nets
 
 
 
@@ -54,7 +59,7 @@ class Predict(object):
 
         with self.sess.as_default():
             with self.graph.as_default():
-                self.saver.restore(self.sess ,"/Users/han/Deeplearning/SSD/checkpoints/ssd_300_vgg.ckpt")
+                self.saver.restore(self.sess ,"/home/han/SSD/SSD/checkpoints/ssd_300_vgg.ckpt")
 
                 # model_file = tf.train.latest_checkpoint('/home/han/SSD/logs/')
                 # self.saver.restore(self.sess , model_file)
