@@ -1,4 +1,4 @@
-
+#coding:utf-8
 """
 将数据转为tfrecord格式
 Usage:

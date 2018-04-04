@@ -6,8 +6,8 @@ from tensorflow.python.ops import control_flow_ops
 
 from datasets import dataset_factory
 from deployment import model_deploy
-from nets import nets_factory
-from preprocessing import preprocessing_factory
+from net import nets_factory
+from preprocessing2 import preprocessing_factory
 import tf_utils
 import time
 import os
@@ -141,7 +141,7 @@ tf.app.flags.DEFINE_integer(
     'batch_size', 32, 'The number of samples in each batch.')
 tf.app.flags.DEFINE_integer(
     'train_image_size', None, 'Train image size')
-tf.app.flags.DEFINE_integer('max_number_of_steps', 1000,
+tf.app.flags.DEFINE_integer('max_number_of_steps', 5000,
                             'The maximum number of training steps.')
 
 # =========================================================================== #

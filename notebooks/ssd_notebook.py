@@ -29,7 +29,7 @@ import threading
 import glob
 from multiprocessing import JoinableQueue
 
-import nets
+
 
 
 
@@ -59,10 +59,11 @@ class Predict(object):
 
         with self.sess.as_default():
             with self.graph.as_default():
-                self.saver.restore(self.sess ,"/home/han/SSD/SSD/checkpoints/ssd_300_vgg.ckpt")
+                # self.saver.restore(self.sess ,"/home/han/SSD/SSD/checkpoints/ssd_300_vgg.ckpt")
 
                 # model_file = tf.train.latest_checkpoint('/home/han/SSD/logs/')
-                # self.saver.restore(self.sess , model_file)
+                # print('###################:' , model_file)
+                self.saver.restore(self.sess , "/home/han/SSD/logs/model.ckpt")
 
 
     def predict(self , img, select_threshold=0.5, nms_threshold=.45):
@@ -297,12 +298,14 @@ def usb_test(images):
     print("pid:" , os.getpid())
 
 # 测试前向传播并显示图像
-img = mpimg.imread("../demo/timg.jpeg")
+img = mpimg.imread("../demo/person.jpg")
 start_time = time.time()
 p = Predict(None)
 total_time = time.time() - start_time
 print("total time:" , total_time)
 rclasses , rscores , rbboxes = p.predict(img)
+print('cls:' , rclasses)
+print('rscores:' , rscores)
 visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
 
 

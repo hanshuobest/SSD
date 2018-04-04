@@ -19,7 +19,8 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib.cm as mpcm
 
-
+CLASS_LABELS = ['Background' , 'aeroplane' , 'bicycle' , 'bird' , 'boat' , 'bottle' , 'bus' , 'car' , 'cat' , 'chair' , 'cow' , 'diningtable' , 'dog' , 'horse' , 'motorbike' , 'person' \
+                , 'pottedplant' , 'sheep' , 'sofa' , 'train' , 'tvmonitor']
 # =========================================================================== #
 # Some colormaps.
 # =========================================================================== #
@@ -106,7 +107,8 @@ def plt_bboxes(img, classes, scores, bboxes, figsize=(10,10), linewidth=1.5):
                                  edgecolor=colors[cls_id],
                                  linewidth=linewidth)
             plt.gca().add_patch(rect)
-            class_name = str(cls_id)
+            # class_name = str(cls_id)
+            class_name = CLASS_LABELS[cls_id]
             plt.gca().text(xmin, ymin - 2,
                            '{:s} | {:.3f}'.format(class_name, score),
                            bbox=dict(facecolor=colors[cls_id], alpha=0.5),
